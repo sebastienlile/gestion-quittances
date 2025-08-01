@@ -95,7 +95,6 @@ app.post('/api/envoyer-quittance', (req, res) => {
 
   doc.end();
 });
-  doc.end();
-});
+
 
 app.listen(5000, () => console.log('Serveur démarré sur le port 5000'));
