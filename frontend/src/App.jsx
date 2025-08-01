@@ -87,9 +87,8 @@ function App() {
   const genererPeriodeLoyer = (moisIndex, annee) => {
     if (moisIndex === '' || annee === '') return '';
     const dateDebut = new Date(annee, moisIndex, 1);
-    const dateFin = new Date(annee, parseInt(moisIndex) + 1, 0);
-    const format = (d) => d.toLocaleDateString('fr-FR');
-    return `${format(dateDebut)} au ${format(dateFin)}`;
+    const format = (d) => d.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+    return `${format(dateDebut)}`;
   };
 
   useEffect(() => {
@@ -123,49 +122,54 @@ function App() {
       console.log('✅ Quittance supprimée');
     }
   };
-const appliquerTri = (données) => {
-  const copie = [...données];
-  const { colonne, ordre } = tri;
 
-  return copie.sort((a, b) => {
-    const valA = a[colonne]?.toString().toLowerCase();
-    const valB = b[colonne]?.toString().toLowerCase();
+  const appliquerTri = (données) => {
+    const copie = [...données];
+    const { colonne, ordre } = tri;
 
-    if (valA < valB) return ordre === 'asc' ? -1 : 1;
-    if (valA > valB) return ordre === 'asc' ? 1 : -1;
-    return 0;
-  });
-};
+    return copie.sort((a, b) => {
+      const valA = a[colonne]?.toString().toLowerCase();
+      const valB = b[colonne]?.toString().toLowerCase();
 
-const trierPar = (colonne) => {
-  setTri((prev) => ({
-    colonne,
-    ordre: prev.colonne === colonne && prev.ordre === 'asc' ? 'desc' : 'asc'
-  }));
-};
+      if (valA < valB) return ordre === 'asc' ? -1 : 1;
+      if (valA > valB) return ordre === 'asc' ? 1 : -1;
+      return 0;
+    });
+  };
 
-const consulterQuittance = async (q) => {
-  try {
-    const response = await axios.post('https://quittances-backend.onrender.com/api/generer-quittance', {
-      civilite: q.civilite,
-      emailLocataire: q.email,
-      nomLocataire: q.nom,
-      adresseLocataire: q.adresse,
-      montantLoyer: q.loyer,
-      montantCharges: q.charges,
-      datePaiement: new Date().toISOString().split('T')[0], // ou stocker date exacte
-      periodeLoyer: q.periode
-    }, { responseType: 'blob' });
+  const trierPar = (colonne) => {
+    setTri((prev) => ({
+      colonne,
+      ordre: prev.colonne === colonne && prev.ordre === 'asc' ? 'desc' : 'asc'
+    }));
+  };
 
-    const blob = new Blob([response.data], { type: 'application/pdf' });
-    const url = window.URL.createObjectURL(blob);
-    window.open(url, '_blank');
-  } catch (err) {
-    console.error('Erreur consultation quittance :', err);
-    alert('❌ Impossible de consulter la quittance.');
-  }
-};
-  const envoyerQuittance = async () => {
+  const consulterQuittance = async (q) => {
+    try {
+      const response = await axios.post('https://quittances-backend.onrender.com/api/generer-quittance', {
+        civilite: q.civilite,
+        emailLocataire: q.email,
+        nomLocataire: q.nom,
+        adresseLocataire: q.adresse,
+        montantLoyer: q.loyer,
+        montantCharges: q.charges,
+        datePaiement: new Date().toISOString().split('T')[0],
+        periodeLoyer: q.periode
+      }, { responseType: 'blob' });
+
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    } catch (err) {
+      console.error('Erreur consultation quittance :', err);
+      alert('❌ Impossible de consulter la quittance.');
+    }
+  };
+
+
+
+
+const envoyerQuittance = async () => {
     setLoading(true);
     setMessage('');
     try {
