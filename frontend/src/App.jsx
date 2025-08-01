@@ -180,11 +180,7 @@ const consulterQuittance = async (q) => {
         periodeLoyer
       });
 
-      const totalMontant = quittancesFiltrees.reduce((acc, q) => {
-  const loyer = parseFloat(q.loyer) || 0;
-  const charges = parseFloat(q.charges) || 0;
-  return acc + loyer + charges;
-}, 0);
+
 
 await supabase.from('Quittance').insert([
   {
