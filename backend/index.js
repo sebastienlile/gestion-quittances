@@ -61,6 +61,12 @@ app.post('/api/envoyer-quittance', (req, res) => {
   doc.text(`Montant des charges : ${montantCharges} €`);
   doc.text(`Date de paiement : ${datePaiement}`);
   doc.text(`Établie sous réserve d'encaissement.`);
+  doc.image('signature.png', {
+  fit: [120, 60],      // Taille réduite de l’image
+  align: 'right',
+  valign: 'bottom'
+
+});
   doc.end();
 });
 
