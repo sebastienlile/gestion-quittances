@@ -98,50 +98,90 @@ function App() {
 
   useEffect(() => {
     if (mode === 'dashboard') {
-    return (
-      <div style={{ maxWidth: '800px', margin: 'auto', padding: '2rem', fontFamily: 'Arial' }}>
-        <h2 style={{ textAlign: 'center', color: '#333' }}>📋 Tableau de bord des quittances</h2>
-        <button
-          onClick={() => setMode('formulaire')}
-          style={{ margin: '1rem auto', display: 'block', padding: '0.5rem 1rem', borderRadius: '5px', backgroundColor: '#007bff', color: 'white', border: 'none' }}>
-          ➕ Créer une quittance
-        </button>
+      chargerHistorique();
+    }
+  }, [mode]);
 
-        {historique.length === 0 ? (
-          <p style={{ textAlign: 'center', color: '#888' }}>Aucune quittance enregistrée.</p>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
-            <thead>
-              <tr style={{ backgroundColor: '#f5f5f5', textAlign: 'left' }}>
-                <th style={{ padding: '0.75rem', borderBottom: '1px solid #ccc' }}>Locataire</th>
-                <th style={{ padding: '0.75rem', borderBottom: '1px solid #ccc' }}>Email</th>
-                <th style={{ padding: '0.75rem', borderBottom: '1px solid #ccc' }}>Période</th>
-                <th style={{ padding: '0.75rem', borderBottom: '1px solid #ccc' }}>Date d'envoi</th>
-                <th style={{ padding: '0.75rem', borderBottom: '1px solid #ccc' }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {historique.map((q) => (
-                <tr key={q.id} style={{ borderBottom: '1px solid #eee' }}>
-                  <td style={{ padding: '0.75rem' }}>{q.civilite} {q.nom}</td>
-                  <td style={{ padding: '0.75rem' }}>{q.email}</td>
-                  <td style={{ padding: '0.75rem' }}>{q.periode}</td>
-                  <td style={{ padding: '0.75rem' }}>{new Date(q.date_envoi).toLocaleDateString('fr-FR')}</td>
-                  <td style={{ padding: '0.75rem' }}>
-                    <button
-                      onClick={() => supprimerQuittance(q.id)}
-                      style={{ backgroundColor: 'red', color: 'white', border: 'none', padding: '0.4rem 0.7rem', borderRadius: '4px', cursor: 'pointer' }}>
-                      🗑️ Supprimer
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    );
-  }
+  const chargerHistorique = async () => {
+    const { data, error } = await supabase.from('Quittance').select('*').order('date_envoi', { ascending: false });
+    if (error) {
+      console.error('Erreur chargement historique:', error.message || error);
+    } else {
+      setHistorique(data);
+    }
+  };
+
+  const supprimerQuittance = async (id) => {
+    const { error } = await supabase.from('Quittance').delete().eq('id', id);
+    if (error) {
+      console.error('Erreur suppression Supabase:', error.message || error);
+    } else {
+      setHistorique(historique.filter(q => q.id !== id));
+      console.log('✅ Quittance supprimée');
+    }
+  };
+
+  const envoyerQuittance = async () => {
+    setLoading(true);
+    setMessage('');
+    try {
+      await axios.post('https://quittances-backend.onrender.com/api/envoyer-quittance', {
+        civilite,
+        emailLocataire,
+        nomLocataire,
+        adresseLocataire,
+        montantLoyer,
+        montantCharges,
+        datePaiement,
+        periodeLoyer
+      });
+
+      const { error } = await supabase.from('Quittance').insert([
+        {
+          civilite,
+          nom: nomLocataire,
+          email: emailLocataire,
+          adresse: adresseLocataire,
+          loyer: parseFloat(montantLoyer),
+          charges: parseFloat(montantCharges),
+          periode: periodeLoyer
+        }
+      ]);
+
+      if (error) {
+        console.error('Erreur insertion Supabase:', error.message || error);
+      } else {
+        console.log('✅ Données insérées dans Supabase');
+        chargerHistorique();
+      }
+
+      setMessage('✅ Quittance envoyée avec succès !');
+    } catch (error) {
+      console.error('Erreur générale:', error);
+      setMessage('❌ Erreur lors de l\'envoi de la quittance.');
+    }
+    setLoading(false);
+  };
+
+  if (mode === 'dashboard') {
+    return (
+      <div style={{ maxWidth: '600px', margin: 'auto', padding: '2rem', fontFamily: 'Arial' }}>
+        <h2>Tableau de bord</h2>
+        <button onClick={() => setMode('formulaire')}>➕ Créer une quittance</button>
+        <ul>
+          {historique.length === 0 && <li>Aucune quittance enregistrée.</li>}
+          {historique.map((q, index) => (
+            <li key={q.id} style={{ marginBottom: '0.5rem' }}>
+              {q.civilite} {q.nom} — {q.email} — {q.periode} — {new Date(q.date_envoi).toLocaleDateString('fr-FR')}
+              <button
+                onClick={() => supprimerQuittance(q.id)}
+                style={{ marginLeft: '1rem', color: 'white', backgroundColor: 'red', border: 'none', padding: '0.2rem 0.5rem', cursor: 'pointer' }}
+              >
+                🗑️ Supprimer
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
     );
   }
