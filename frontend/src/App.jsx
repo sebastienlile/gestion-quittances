@@ -188,7 +188,7 @@ function App() {
 
   return (
     <div style={{ maxWidth: '700px', margin: '2rem auto', padding: '2rem', fontFamily: 'Arial', backgroundColor: '#fefefe', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-      <h2 style={{ textAlign: 'center', color: '#333' }}>Envoyer une quittance de loyer</h2>
+      <h2 style={{ textAlign: 'center', color: '#333' }}>Quittance de loyer</h2>
 
       <button onClick={() => setMode('dashboard')} style={{ marginBottom: '1rem', width: '100%', padding: '0.5rem', backgroundColor: '#eee', border: 'none', borderRadius: '5px' }}>
         📊 Voir les quittances envoyées
