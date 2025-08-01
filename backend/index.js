@@ -19,14 +19,15 @@ const transporter = nodemailer.createTransport({
 });
 
 app.post('/api/envoyer-quittance', (req, res) => {
-  const {
-    emailLocataire,
-    nomLocataire,
-    adresseLocataire,
-    montantLoyer,
-    montantCharges,
-    datePaiement
-  } = req.body;
+const {
+  emailLocataire,
+  nomLocataire,
+  adresseLocataire,
+  montantLoyer,
+  montantCharges,
+  datePaiement,
+  periodeLoyer // 👈 ajout obligatoire
+} = req.body;
 
   const total = parseFloat(montantLoyer) + parseFloat(montantCharges);
 
