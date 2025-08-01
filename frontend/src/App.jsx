@@ -4,8 +4,8 @@ import { supabase } from './supabaseClient';
 
 function App() {
   const [civilite, setCivilite] = useState('');
-  const [nomLocataire, setNomLocataire] = useState('');
   const [emailLocataire, setEmailLocataire] = useState('');
+  const [nomLocataire, setNomLocataire] = useState('');
   const [adresseLocataire, setAdresseLocataire] = useState('');
   const [montantLoyer, setMontantLoyer] = useState('');
   const [montantCharges, setMontantCharges] = useState('');
