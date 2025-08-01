@@ -62,10 +62,11 @@ app.post('/api/envoyer-quittance', (req, res) => {
   });
 
   // === Modèle de la quittance
+doc.fontSize(18).text('Quittance de Loyer', { align: 'center' });
+  doc.moveDown();
   doc.fontSize(12);
   doc.text(`Je soussigné, Sébastien Lile, propriétaire du logement situé au :`);
   doc.text(`535 Grande Rue, 78955 Carrières-sous-Poissy,`);
-  doc.moveDown();
   doc.text(`déclare avoir reçu de la part de :`);
   doc.text(`  • Nom du locataire : ${nomLocataire}`);
   doc.text(`  • Adresse du locataire : ${adresseLocataire}`);
