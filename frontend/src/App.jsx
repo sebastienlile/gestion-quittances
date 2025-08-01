@@ -285,7 +285,11 @@ await supabase.from('Quittance').insert([
     <th style={{ ...thStyle, width: '110px' }}>Actions</th>
   </tr>
 </thead>
-
+const totalMontant = quittancesFiltrees.reduce((acc, q) => {
+  const loyer = parseFloat(q.loyer) || 0;
+  const charges = parseFloat(q.charges) || 0;
+  return acc + loyer + charges;
+}, 0);
    <tbody>
             {appliquerTri(quittancesFiltrees).map((q) => (
               <tr key={q.id} style={{ borderBottom: '1px solid #eee' }}>
@@ -330,7 +334,8 @@ await supabase.from('Quittance').insert([
           </tbody>
         </table>
       )}
-      <p style={{ marginTop: '1rem', textAlign: 'right', fontWeight: 'bold' }}>
+  
+<p style={{ marginTop: '1rem', textAlign: 'right', fontWeight: 'bold' }}>
   Total collecté (loyers + charges) : {totalMontant.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
 </p>
     </div>
