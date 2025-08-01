@@ -16,7 +16,9 @@ function App() {
   const [message, setMessage] = useState('');
   const [mode, setMode] = useState('formulaire'); // 'dashboard' ou 'formulaire'
   const [historique, setHistorique] = useState([]);
-
+  const supprimerQuittance = (indexASupprimer) => {
+  setHistorique(prev => prev.filter((_, i) => i !== indexASupprimer));
+};
   const genererPeriodeLoyer = (moisIndex, annee) => {
     if (moisIndex === '' || annee === '') return '';
     const dateDebut = new Date(annee, moisIndex, 1);
@@ -85,10 +87,21 @@ function App() {
         <button onClick={() => setMode('formulaire')}>➕ Créer une quittance</button>
         <ul>
           {historique.length === 0 && <li>Aucune quittance encore envoyée.</li>}
+
           {historique.map((q, index) => (
-            <li key={index}>
-              {q.civilite} {q.nom} — {q.email} — {q.periode} — {q.date}
-            </li>
+  <li key={index} style={{ marginBottom: '0.5rem' }}>
+    {q.civilite} {q.nom} — {q.email} — {q.periode} — {q.date}
+    <button
+      onClick={() => supprimerQuittance(index)}
+      style={{ marginLeft: '1rem', color: 'white', backgroundColor: 'red', border: 'none', padding: '0.2rem 0.5rem', cursor: 'pointer' }}
+    >
+      🗑️ Supprimer
+    </button>
+  </li>
+))}
+
+
+
           ))}
         </ul>
       </div>
