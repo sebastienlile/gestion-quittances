@@ -43,7 +43,11 @@ const {
       from: 'sebastien95360@gmail.com',
       to: emailLocataire,
       subject: 'Quittance de Loyer',
-      html: `<p>Veuillez trouver ci-joint votre quittance de loyer.</p>`,
+      html: `
+  <p>Bonjour ${nomLocataire},</p>
+  <p>Veuillez trouver ci-joint votre quittance de loyer.</p>
+  <p>Cordialement,<br/>Sébastien Lile</p>
+`,
       attachments: [
         {
           filename: `quittance-${datePaiement}.pdf`,
