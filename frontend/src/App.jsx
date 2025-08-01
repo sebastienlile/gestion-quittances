@@ -18,7 +18,8 @@ function App() {
   const [mode, setMode] = useState('formulaire');
   const [historique, setHistorique] = useState([]);
   const [recherche, setRecherche] = useState('');
-
+  const [tri, setTri] = useState({ colonne: 'date_envoi', ordre: 'desc' });
+  const thStyle = { padding: '0.75rem', borderBottom: '1px solid #ccc', cursor: 'pointer' };
 
   const locataires = [
     {
@@ -122,7 +123,26 @@ function App() {
       console.log('✅ Quittance supprimée');
     }
   };
+const appliquerTri = (données) => {
+  const copie = [...données];
+  const { colonne, ordre } = tri;
 
+  return copie.sort((a, b) => {
+    const valA = a[colonne]?.toString().toLowerCase();
+    const valB = b[colonne]?.toString().toLowerCase();
+
+    if (valA < valB) return ordre === 'asc' ? -1 : 1;
+    if (valA > valB) return ordre === 'asc' ? 1 : -1;
+    return 0;
+  });
+};
+
+const trierPar = (colonne) => {
+  setTri((prev) => ({
+    colonne,
+    ordre: prev.colonne === colonne && prev.ordre === 'asc' ? 'desc' : 'asc'
+  }));
+};
   const envoyerQuittance = async () => {
     setLoading(true);
     setMessage('');
@@ -207,17 +227,30 @@ function App() {
         <p style={{ textAlign: 'center', color: '#888' }}>Aucune quittance trouvée.</p>
       ) : (
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ backgroundColor: '#f5f5f5' }}>
-              <th style={{ padding: '0.75rem', borderBottom: '1px solid #ccc' }}>Locataire</th>
-              <th style={{ padding: '0.75rem', borderBottom: '1px solid #ccc' }}>Email</th>
-              <th style={{ padding: '0.75rem', borderBottom: '1px solid #ccc' }}>Période</th>
-              <th style={{ padding: '0.75rem', borderBottom: '1px solid #ccc' }}>Date d'envoi</th>
-              <th style={{ padding: '0.75rem', borderBottom: '1px solid #ccc' }}></th>
-            </tr>
-          </thead>
+
+<thead>
+  <tr style={{ backgroundColor: '#f5f5f5' }}>
+    <th onClick={() => trierPar('nom')} style={thStyle}>
+      Locataire {tri.colonne === 'nom' && (tri.ordre === 'asc' ? '▲' : '▼')}
+    </th>
+    <th onClick={() => trierPar('email')} style={thStyle}>
+      Email {tri.colonne === 'email' && (tri.ordre === 'asc' ? '▲' : '▼')}
+    </th>
+    <th onClick={() => trierPar('periode')} style={thStyle}>
+      Période {tri.colonne === 'periode' && (tri.ordre === 'asc' ? '▲' : '▼')}
+    </th>
+    <th onClick={() => trierPar('date_envoi')} style={thStyle}>
+      Date d'envoi {tri.colonne === 'date_envoi' && (tri.ordre === 'asc' ? '▲' : '▼')}
+    </th>
+    <th style={thStyle}></th>
+  </tr>
+</thead>
+
+
+
+
           <tbody>
-            {quittancesFiltrees.map((q) => (
+            {appliquerTri(quittancesFiltrees).map((q) => (
               <tr key={q.id} style={{ borderBottom: '1px solid #eee' }}>
                 <td style={{ padding: '0.75rem' }}>{q.civilite} {q.nom}</td>
                 <td style={{ padding: '0.75rem' }}>{q.email}</td>
