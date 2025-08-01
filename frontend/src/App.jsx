@@ -279,52 +279,45 @@ await supabase.from('Quittance').insert([
   </tr>
 </thead>
 
-
-
-
-          <tbody>
+   <tbody>
             {appliquerTri(quittancesFiltrees).map((q) => (
               <tr key={q.id} style={{ borderBottom: '1px solid #eee' }}>
                 <td style={{ padding: '0.75rem' }}>{q.civilite} {q.nom}</td>
                 <td style={{ padding: '0.75rem' }}>{q.email}</td>
-                <td style={{ padding: '0.75rem' }}>
-  {(() => {
-    const moisAnnee = new Date(q.periode.split(' au ')[0]);
-    return moisAnnee.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
-  })()}
-</td>
-<td style={{ padding: '0.75rem', display: 'flex', gap: '0.4rem' }}>
-  <button
-    onClick={() => consulterQuittance(q)}
-    style={{
-      flex: 1,
-      backgroundColor: 'green',
-      color: 'white',
-      border: 'none',
-      padding: '0.3rem 0.4rem',
-      borderRadius: '4px',
-      fontSize: '0.75rem',
-      cursor: 'pointer'
-    }}
-  >
-    🔍
-  </button>
-  <button
-    onClick={() => supprimerQuittance(q.id)}
-    style={{
-      flex: 1,
-      backgroundColor: 'red',
-      color: 'white',
-      border: 'none',
-      padding: '0.3rem 0.4rem',
-      borderRadius: '4px',
-      fontSize: '0.75rem',
-      cursor: 'pointer'
-    }}
-  >
-    🗑️
-  </button>
-</td>
+                <td style={{ padding: '0.75rem' }}>{new Date(q.periode.split(' au ')[0]).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</td>
+                <td style={{ padding: '0.75rem' }}>{new Date(q.date_envoi).toLocaleDateString('fr-FR')}</td>
+                <td style={{ padding: '0.75rem', display: 'flex', gap: '0.4rem' }}>
+                  <button
+                    onClick={() => consulterQuittance(q)}
+                    style={{
+                      flex: 1,
+                      backgroundColor: 'green',
+                      color: 'white',
+                      border: 'none',
+                      padding: '0.3rem 0.4rem',
+                      borderRadius: '4px',
+                      fontSize: '0.75rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    🔍
+                  </button>
+                  <button
+                    onClick={() => supprimerQuittance(q.id)}
+                    style={{
+                      flex: 1,
+                      backgroundColor: 'red',
+                      color: 'white',
+                      border: 'none',
+                      padding: '0.3rem 0.4rem',
+                      borderRadius: '4px',
+                      fontSize: '0.75rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    🗑️
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
