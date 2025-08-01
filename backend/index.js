@@ -74,6 +74,7 @@ doc.fontSize(18).text('Quittance de Loyer', { align: 'center' });
   doc.text(`  • Adresse du locataire : ${adresseLocataire}`);
   doc.moveDown();
   doc.text(`Le paiement du loyer pour la période : ${periodeLoyer}`);
+  doc.moveDown();
   doc.text(`  • Montant du loyer : ${montantLoyer} €`);
   doc.text(`  • Montant des charges : ${montantCharges} €`);
   doc.font('Helvetica-Bold');
