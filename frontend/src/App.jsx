@@ -40,7 +40,7 @@ function App() {
   }, [mode]);
 
   const chargerHistorique = async () => {
-    const { data, error } = await supabase.from('quittances').select('*').order('date_envoi', { ascending: false });
+    const { data, error } = await supabase.from('quittance').select('*').order('date_envoi', { ascending: false });
     if (error) {
       console.error('Erreur chargement historique:', error);
     } else {
@@ -49,7 +49,7 @@ function App() {
   };
 
   const supprimerQuittance = async (id) => {
-    const { error } = await supabase.from('quittances').delete().eq('id', id);
+    const { error } = await supabase.from('quittance').delete().eq('id', id);
     if (error) {
       console.error('Erreur suppression:', error);
     } else {
@@ -72,7 +72,7 @@ function App() {
         periodeLoyer
       });
 
-      const { error } = await supabase.from('quittances').insert([
+      const { error } = await supabase.from('quittance').insert([
         {
           civilite,
           nom: nomLocataire,
