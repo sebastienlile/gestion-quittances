@@ -18,6 +18,30 @@ function App() {
   const [mode, setMode] = useState('formulaire');
   const [historique, setHistorique] = useState([]);
 
+  const locataires = [
+    {
+      nom: 'Sébastien Lile',
+      email: 'sebastien95360@gmail.com',
+      civilite: 'Monsieur',
+      adresse: '13 rue des charonnerets, Richemont 57270',
+      loyer: 1800,
+      charges: 0
+    }
+    // Tu peux ajouter d'autres locataires ici
+  ];
+
+  const handleSelectionLocataire = (nom) => {
+    const locataire = locataires.find(l => l.nom === nom);
+    if (locataire) {
+      setNomLocataire(locataire.nom);
+      setEmailLocataire(locataire.email);
+      setCivilite(locataire.civilite);
+      setAdresseLocataire(locataire.adresse);
+      setMontantLoyer(locataire.loyer);
+      setMontantCharges(locataire.charges);
+    }
+  };
+
   const genererPeriodeLoyer = (moisIndex, annee) => {
     if (moisIndex === '' || annee === '') return '';
     const dateDebut = new Date(annee, moisIndex, 1);
@@ -42,7 +66,7 @@ function App() {
   const chargerHistorique = async () => {
     const { data, error } = await supabase.from('Quittance').select('*').order('date_envoi', { ascending: false });
     if (error) {
-      console.error('Erreur chargement historique:', error);
+      console.error('Erreur chargement historique:', error.message || error);
     } else {
       setHistorique(data);
     }
@@ -51,9 +75,10 @@ function App() {
   const supprimerQuittance = async (id) => {
     const { error } = await supabase.from('Quittance').delete().eq('id', id);
     if (error) {
-      console.error('Erreur suppression:', error);
+      console.error('Erreur suppression Supabase:', error.message || error);
     } else {
       setHistorique(historique.filter(q => q.id !== id));
+      console.log('✅ Quittance supprimée');
     }
   };
 
@@ -85,7 +110,7 @@ function App() {
       ]);
 
       if (error) {
-        console.error('Erreur insertion Supabase:', error);
+        console.error('Erreur insertion Supabase:', error.message || error);
       } else {
         console.log('✅ Données insérées dans Supabase');
         chargerHistorique();
@@ -129,6 +154,14 @@ function App() {
       <button onClick={() => setMode('dashboard')} style={{ marginBottom: '1rem' }}>
         📊 Voir les quittances envoyées
       </button>
+
+      <label>Locataire :</label>
+      <select value={nomLocataire} onChange={e => handleSelectionLocataire(e.target.value)}>
+        <option value="">-- Sélectionner un locataire --</option>
+        {locataires.map((l, index) => (
+          <option key={index} value={l.nom}>{l.nom}</option>
+        ))}
+      </select><br />
 
       <label>Civilité :</label>
       <select value={civilite} onChange={e => setCivilite(e.target.value)}>
