@@ -20,13 +20,14 @@ const transporter = nodemailer.createTransport({
 
 app.post('/api/envoyer-quittance', (req, res) => {
 const {
+  civilite,
   emailLocataire,
   nomLocataire,
   adresseLocataire,
   montantLoyer,
   montantCharges,
   datePaiement,
-  periodeLoyer // 👈 ajout obligatoire
+  periodeLoyer
 } = req.body;
 
   const total = parseFloat(montantLoyer) + parseFloat(montantCharges);
@@ -43,8 +44,8 @@ const {
       from: 'sebastien95360@gmail.com',
       to: emailLocataire,
       subject: 'Quittance de Loyer',
-      html: `
-  <p>Bonjour ${nomLocataire},</p>
+     html: `
+  <p>Bonjour ${civilite} ${nomLocataire},</p>
   <p>Veuillez trouver ci-joint votre quittance de loyer.</p>
   <p>Cordialement,<br/>Sébastien Lile</p>
 `,
