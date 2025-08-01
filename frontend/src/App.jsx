@@ -143,6 +143,28 @@ const trierPar = (colonne) => {
     ordre: prev.colonne === colonne && prev.ordre === 'asc' ? 'desc' : 'asc'
   }));
 };
+
+const consulterQuittance = async (q) => {
+  try {
+    const response = await axios.post('https://quittances-backend.onrender.com/api/generer-quittance', {
+      civilite: q.civilite,
+      emailLocataire: q.email,
+      nomLocataire: q.nom,
+      adresseLocataire: q.adresse,
+      montantLoyer: q.loyer,
+      montantCharges: q.charges,
+      datePaiement: new Date().toISOString().split('T')[0], // ou stocker date exacte
+      periodeLoyer: q.periode
+    }, { responseType: 'blob' });
+
+    const blob = new Blob([response.data], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+    window.open(url, '_blank');
+  } catch (err) {
+    console.error('Erreur consultation quittance :', err);
+    alert('❌ Impossible de consulter la quittance.');
+  }
+};
   const envoyerQuittance = async () => {
     setLoading(true);
     setMessage('');
@@ -271,22 +293,35 @@ await supabase.from('Quittance').insert([
     return moisAnnee.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
   })()}
 </td>
-                <td style={{ padding: '0.75rem' }}>{new Date(q.date_envoi).toLocaleDateString('fr-FR')}</td>
-                <td style={{ padding: '0.75rem' }}>
-                  <button
-                    onClick={() => supprimerQuittance(q.id)}
-                    style={{
-                      backgroundColor: 'red',
-                      color: 'white',
-                      border: 'none',
-                      padding: '0.4rem 0.7rem',
-                      borderRadius: '4px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    🗑️ Supprimer
-                  </button>
-                </td>
+<td style={{ padding: '0.75rem' }}>
+  <button
+    onClick={() => consulterQuittance(q)}
+    style={{
+      backgroundColor: 'green',
+      color: 'white',
+      border: 'none',
+      padding: '0.4rem 0.7rem',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      marginRight: '0.5rem'
+    }}
+  >
+    🔍 Voir
+  </button>
+  <button
+    onClick={() => supprimerQuittance(q.id)}
+    style={{
+      backgroundColor: 'red',
+      color: 'white',
+      border: 'none',
+      padding: '0.4rem 0.7rem',
+      borderRadius: '4px',
+      cursor: 'pointer'
+    }}
+  >
+    🗑️ Supprimer
+  </button>
+</td>
               </tr>
             ))}
           </tbody>
