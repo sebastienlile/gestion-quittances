@@ -275,7 +275,8 @@ await supabase.from('Quittance').insert([
     <th onClick={() => trierPar('date_envoi')} style={thStyle}>
       Date d'envoi {tri.colonne === 'date_envoi' && (tri.ordre === 'asc' ? '▲' : '▼')}
     </th>
-<th style={{ width: '120px', ...thStyle }}></th>  </tr>
+    <th style={{ ...thStyle, width: '110px' }}>Actions</th>
+  </tr>
 </thead>
 
 
@@ -292,7 +293,7 @@ await supabase.from('Quittance').insert([
     return moisAnnee.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
   })()}
 </td>
-<td style={{ padding: '0.75rem', display: 'flex', gap: '0.5rem' }}>
+<td style={{ padding: '0.75rem', display: 'flex', gap: '0.4rem' }}>
   <button
     onClick={() => consulterQuittance(q)}
     style={{
@@ -300,13 +301,13 @@ await supabase.from('Quittance').insert([
       backgroundColor: 'green',
       color: 'white',
       border: 'none',
-      padding: '0.3rem',
+      padding: '0.3rem 0.4rem',
       borderRadius: '4px',
-      fontSize: '0.8rem',
+      fontSize: '0.75rem',
       cursor: 'pointer'
     }}
   >
-    🔍 Voir
+    🔍
   </button>
   <button
     onClick={() => supprimerQuittance(q.id)}
@@ -315,9 +316,9 @@ await supabase.from('Quittance').insert([
       backgroundColor: 'red',
       color: 'white',
       border: 'none',
-      padding: '0.3rem',
+      padding: '0.3rem 0.4rem',
       borderRadius: '4px',
-      fontSize: '0.8rem',
+      fontSize: '0.75rem',
       cursor: 'pointer'
     }}
   >
