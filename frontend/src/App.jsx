@@ -47,7 +47,23 @@ function App() {
       setHistorique(data);
     }
   };
+const { error } = await supabase.from('quittances').insert([
+  {
+    civilite,
+    nom: nomLocataire,
+    email: emailLocataire,
+    adresse: adresseLocataire,
+    loyer: parseFloat(montantLoyer),
+    charges: parseFloat(montantCharges),
+    periode: periodeLoyer
+  }
+]);
 
+if (error) {
+  console.error('Erreur insertion Supabase:', error);
+} else {
+  console.log('✅ Données insérées dans Supabase');
+}
   const supprimerQuittance = async (id) => {
     const { error } = await supabase.from('quittances').delete().eq('id', id);
     if (error) {
