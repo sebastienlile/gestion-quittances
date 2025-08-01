@@ -280,7 +280,7 @@ const { error } = await supabase.from('Quittance').insert([
               <tr key={q.id} style={{ borderBottom: '1px solid #eee' }}>
                 <td style={{ padding: '0.75rem' }}>{q.civilite} {q.nom}</td>
                 <td style={{ padding: '0.75rem' }}>{q.email}</td>
-                <td style={{ padding: '0.75rem' }}>{new Date(q.periode.split(' au ')[0]).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</td>
+                <td style={{ padding: '0.75rem' }}>{q.periode}</td>
                 <td style={{ padding: '0.75rem' }}>{new Date(q.date_envoi).toLocaleDateString('fr-FR')}</td>
                 <td style={{ padding: '0.75rem', display: 'flex', gap: '0.4rem' }}>
                   <button
