@@ -187,37 +187,37 @@ function App() {
   }
 
   return (
-    <div style={{ maxWidth: '500px', margin: 'auto', padding: '2rem', fontFamily: 'Arial' }}>
-      <h2>Envoyer une quittance de loyer</h2>
+    <div style={{ maxWidth: '600px', margin: '2rem auto', padding: '2rem', fontFamily: 'Arial', backgroundColor: '#fefefe', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+      <h2 style={{ textAlign: 'center', color: '#333' }}>Envoyer une quittance de loyer</h2>
 
-      <button onClick={() => setMode('dashboard')} style={{ marginBottom: '1rem' }}>
+      <button onClick={() => setMode('dashboard')} style={{ marginBottom: '1rem', width: '100%', padding: '0.5rem', backgroundColor: '#eee', border: 'none', borderRadius: '5px' }}>
         📊 Voir les quittances envoyées
       </button>
 
       <label>Locataire :</label>
-      <select value={nomLocataire} onChange={e => handleSelectionLocataire(e.target.value)}>
+      <select value={nomLocataire} onChange={e => handleSelectionLocataire(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }}>
         <option value="">-- Sélectionner un locataire --</option>
         {locataires.map((l, index) => (
           <option key={index} value={l.nom}>{l.nom}</option>
         ))}
-      </select><br />
+      </select>
 
       <label>Civilité :</label>
-      <select value={civilite} onChange={e => setCivilite(e.target.value)}>
+      <select value={civilite} onChange={e => setCivilite(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }}>
         <option value="">-- Choisir --</option>
         <option value="Monsieur">Monsieur</option>
         <option value="Madame">Madame</option>
-      </select><br />
+      </select>
 
-      <input type="email" placeholder="Email du locataire" value={emailLocataire} onChange={e => setEmailLocataire(e.target.value)} required /><br />
-      <input type="text" placeholder="Nom du locataire" value={nomLocataire} onChange={e => setNomLocataire(e.target.value)} /><br />
-      <input type="text" placeholder="Adresse du locataire" value={adresseLocataire} onChange={e => setAdresseLocataire(e.target.value)} /><br />
-      <input type="number" placeholder="Montant du loyer (€)" value={montantLoyer} onChange={e => setMontantLoyer(e.target.value)} /><br />
-      <input type="number" placeholder="Montant des charges (€)" value={montantCharges} onChange={e => setMontantCharges(e.target.value)} /><br />
-      <input type="date" value={datePaiement} onChange={e => setDatePaiement(e.target.value)} /><br />
+      <input type="email" placeholder="Email du locataire" value={emailLocataire} onChange={e => setEmailLocataire(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }} /><br />
+      <input type="text" placeholder="Nom du locataire" value={nomLocataire} onChange={e => setNomLocataire(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }} /><br />
+      <input type="text" placeholder="Adresse du locataire" value={adresseLocataire} onChange={e => setAdresseLocataire(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }} /><br />
+      <input type="number" placeholder="Montant du loyer (€)" value={montantLoyer} onChange={e => setMontantLoyer(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }} /><br />
+      <input type="number" placeholder="Montant des charges (€)" value={montantCharges} onChange={e => setMontantCharges(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }} /><br />
+      <input type="date" value={datePaiement} onChange={e => setDatePaiement(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }} /><br />
 
       <label>Mois :</label>
-      <select value={mois} onChange={e => setMois(e.target.value)}>
+      <select value={mois} onChange={e => setMois(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }}>
         <option value="">-- Choisir un mois --</option>
         <option value="0">Janvier</option>
         <option value="1">Février</option>
@@ -234,14 +234,14 @@ function App() {
       </select><br />
 
       <label>Année :</label>
-      <input type="number" placeholder="ex : 2025" value={annee} onChange={e => setAnnee(e.target.value)} /><br />
+      <input type="number" placeholder="ex : 2025" value={annee} onChange={e => setAnnee(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }} /><br />
 
       <p><strong>Période générée :</strong> {periodeLoyer || '—'}</p>
 
-      <button onClick={envoyerQuittance} disabled={loading} style={{ marginTop: '1rem' }}>
-        {loading ? 'Envoi en cours...' : 'Envoyer la quittance'}
+      <button onClick={envoyerQuittance} disabled={loading} style={{ marginTop: '1rem', width: '100%', padding: '0.8rem', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px', fontSize: '1rem', cursor: 'pointer' }}>
+        {loading ? 'Envoi en cours...' : '📨 Envoyer la quittance'}
       </button>
-      <p>{message}</p>
+      <p style={{ marginTop: '1rem', textAlign: 'center' }}>{message}</p>
     </div>
   );
 }
