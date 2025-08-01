@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { supabase } from './supabaseClient';
 
 function App() {
   const [civilite, setCivilite] = useState('');
@@ -14,11 +15,9 @@ function App() {
   const [periodeLoyer, setPeriodeLoyer] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [mode, setMode] = useState('formulaire'); // 'dashboard' ou 'formulaire'
+  const [mode, setMode] = useState('formulaire');
   const [historique, setHistorique] = useState([]);
-  const supprimerQuittance = (indexASupprimer) => {
-  setHistorique(prev => prev.filter((_, i) => i !== indexASupprimer));
-};
+
   const genererPeriodeLoyer = (moisIndex, annee) => {
     if (moisIndex === '' || annee === '') return '';
     const dateDebut = new Date(annee, moisIndex, 1);
@@ -33,6 +32,30 @@ function App() {
       setPeriodeLoyer(periode);
     }
   }, [mois, annee]);
+
+  useEffect(() => {
+    if (mode === 'dashboard') {
+      chargerHistorique();
+    }
+  }, [mode]);
+
+  const chargerHistorique = async () => {
+    const { data, error } = await supabase.from('quittances').select('*').order('date_envoi', { ascending: false });
+    if (error) {
+      console.error('Erreur chargement historique:', error);
+    } else {
+      setHistorique(data);
+    }
+  };
+
+  const supprimerQuittance = async (id) => {
+    const { error } = await supabase.from('quittances').delete().eq('id', id);
+    if (error) {
+      console.error('Erreur suppression:', error);
+    } else {
+      setHistorique(historique.filter(q => q.id !== id));
+    }
+  };
 
   const envoyerQuittance = async () => {
     setLoading(true);
@@ -49,30 +72,19 @@ function App() {
         periodeLoyer
       });
 
-      // Ajoute à l'historique local
-      setHistorique(prev => [
-        ...prev,
+      await supabase.from('quittances').insert([
         {
           civilite,
           nom: nomLocataire,
           email: emailLocataire,
-          date: new Date().toLocaleDateString('fr-FR'),
+          adresse: adresseLocataire,
+          loyer: parseFloat(montantLoyer),
+          charges: parseFloat(montantCharges),
           periode: periodeLoyer
         }
       ]);
 
       setMessage('✅ Quittance envoyée avec succès !');
-      // Optionnel : réinitialise le formulaire
-      setCivilite('');
-      setEmailLocataire('');
-      setNomLocataire('');
-      setAdresseLocataire('');
-      setMontantLoyer('');
-      setMontantCharges('');
-      setDatePaiement('');
-      setMois('');
-      setAnnee('');
-      setPeriodeLoyer('');
     } catch (error) {
       console.error(error);
       setMessage('❌ Erreur lors de l\'envoi de la quittance.');
@@ -86,22 +98,17 @@ function App() {
         <h2>Tableau de bord</h2>
         <button onClick={() => setMode('formulaire')}>➕ Créer une quittance</button>
         <ul>
-          {historique.length === 0 && <li>Aucune quittance encore envoyée.</li>}
-
+          {historique.length === 0 && <li>Aucune quittance enregistrée.</li>}
           {historique.map((q, index) => (
-  <li key={index} style={{ marginBottom: '0.5rem' }}>
-    {q.civilite} {q.nom} — {q.email} — {q.periode} — {q.date}
-    <button
-      onClick={() => supprimerQuittance(index)}
-      style={{ marginLeft: '1rem', color: 'white', backgroundColor: 'red', border: 'none', padding: '0.2rem 0.5rem', cursor: 'pointer' }}
-    >
-      🗑️ Supprimer
-    </button>
-  </li>
-))}
-
-
-
+            <li key={q.id} style={{ marginBottom: '0.5rem' }}>
+              {q.civilite} {q.nom} — {q.email} — {q.periode} — {new Date(q.date_envoi).toLocaleDateString('fr-FR')}
+              <button
+                onClick={() => supprimerQuittance(q.id)}
+                style={{ marginLeft: '1rem', color: 'white', backgroundColor: 'red', border: 'none', padding: '0.2rem 0.5rem', cursor: 'pointer' }}
+              >
+                🗑️ Supprimer
+              </button>
+            </li>
           ))}
         </ul>
       </div>
