@@ -221,7 +221,12 @@ function App() {
               <tr key={q.id} style={{ borderBottom: '1px solid #eee' }}>
                 <td style={{ padding: '0.75rem' }}>{q.civilite} {q.nom}</td>
                 <td style={{ padding: '0.75rem' }}>{q.email}</td>
-                <td style={{ padding: '0.75rem' }}>{q.periode}</td>
+                <td style={{ padding: '0.75rem' }}>
+  {(() => {
+    const moisAnnee = new Date(q.periode.split(' au ')[0]);
+    return moisAnnee.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+  })()}
+</td>
                 <td style={{ padding: '0.75rem' }}>{new Date(q.date_envoi).toLocaleDateString('fr-FR')}</td>
                 <td style={{ padding: '0.75rem' }}>
                   <button
