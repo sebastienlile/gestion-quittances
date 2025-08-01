@@ -186,7 +186,7 @@ const envoyerQuittance = async () => {
 
 
 
-await supabase.from('Quittance').insert([
+const { error } = await supabase.from('Quittance').insert([
   {
     civilite,
     nom: nomLocataire,
@@ -198,17 +198,6 @@ await supabase.from('Quittance').insert([
     date_envoi: new Date().toISOString()
   }
 ]);
-      const { error } = await supabase.from('Quittance').insert([
-        {
-          civilite,
-          nom: nomLocataire,
-          email: emailLocataire,
-          adresse: adresseLocataire,
-          loyer: parseFloat(montantLoyer),
-          charges: parseFloat(montantCharges),
-          periode: periodeLoyer
-        }
-      ]);
 
       if (error) {
         console.error('Erreur insertion Supabase:', error.message || error);
