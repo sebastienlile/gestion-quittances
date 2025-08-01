@@ -9,8 +9,8 @@ app.use(cors());
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'tonemail@gmail.com',
-    pass: 'motdepasseapplicationgmail'
+    user: 'sebastien95360@gmail.com',
+    pass: 'knrw bqjk jfmq gezy'
   }
 });
 
@@ -18,7 +18,7 @@ app.post('/api/envoyer-quittance', (req, res) => {
   const { emailLocataire, montantLoyer, montantCharges, datePaiement } = req.body;
 
   const mailOptions = {
-    from: 'tonemail@gmail.com',
+    from: 'sebastien95360@gmail.com',
     to: emailLocataire,
     subject: 'Quittance de Loyer',
     html: `
