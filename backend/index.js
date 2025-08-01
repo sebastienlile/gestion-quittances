@@ -16,10 +16,22 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-app.post('/api/envoyer-quittance', (req, res) => {
-  const { emailLocataire, montantLoyer, montantCharges, datePaiement } = req.body;
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+const path = require('path');
 
-  // 1. Créer le PDF dans un buffer (pas besoin de fichier temporaire)
+app.post('/api/envoyer-quittance', (req, res) => {
+  const {
+    emailLocataire,
+    nomLocataire,
+    adresseLocataire,
+    montantLoyer,
+    montantCharges,
+    datePaiement
+  } = req.body;
+
+  const total = parseFloat(montantLoyer) + parseFloat(montantCharges);
+
   const doc = new PDFDocument();
   let buffers = [];
 
@@ -27,15 +39,11 @@ app.post('/api/envoyer-quittance', (req, res) => {
   doc.on('end', () => {
     const pdfBuffer = Buffer.concat(buffers);
 
-    // 2. Configuration de l'email
     const mailOptions = {
       from: process.env.GMAIL_USER,
       to: emailLocataire,
       subject: 'Quittance de Loyer',
-      html: `
-        <h3>Quittance de Loyer</h3>
-        <p>Veuillez trouver ci-joint la quittance pour le paiement du loyer.</p>
-      `,
+      html: `<p>Veuillez trouver ci-joint votre quittance de loyer.</p>`,
       attachments: [
         {
           filename: `quittance-${datePaiement}.pdf`,
@@ -48,24 +56,44 @@ app.post('/api/envoyer-quittance', (req, res) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.error(error);
-        return res.status(500).send('Erreur lors de l\'envoi de la quittance.');
+        return res.status(500).send("Erreur lors de l'envoi.");
       }
       res.status(200).send('Quittance PDF envoyée avec succès.');
     });
   });
 
-  // 3. Contenu du PDF
-  doc.fontSize(18).text('Quittance de Loyer', { align: 'center' });
+  // 🔽 Génération du contenu PDF avec ton modèle
+  doc.fontSize(12);
+  doc.text(`Je soussigné, Sébastien Lile, propriétaire du logement situé au :`);
+  doc.text(`535 Grande Rue, 78955 Carrières-sous-Poissy,`);
   doc.moveDown();
-  doc.fontSize(12).text(`Montant du loyer : ${montantLoyer} €`);
-  doc.text(`Montant des charges : ${montantCharges} €`);
-  doc.text(`Date de paiement : ${datePaiement}`);
-  doc.text(`Établie sous réserve d'encaissement.`);
-  doc.image('signature.png', {
-  fit: [120, 60],      // Taille réduite de l’image
-  align: 'right',
-  valign: 'bottom'
+  doc.text(`déclare avoir reçu de la part de :`);
+  doc.text(`  • Nom du locataire : ${nomLocataire}`);
+  doc.text(`  • Adresse du locataire : ${adresseLocataire}`);
+  doc.moveDown();
+  doc.text(`Le paiement du loyer pour la période :`);
+  doc.text(`  • Montant du loyer : ${montantLoyer} €`);
+  doc.text(`  • Montant des charges : ${montantCharges} €`);
+  doc.text(`  • Total payé : ${total} €`);
+  doc.moveDown();
+  doc.text(`Fait le : ${new Date().toLocaleDateString('fr-FR')}`);
+  doc.moveDown(2);
 
+  // 🔽 Signature texte + image
+  doc.text('Sébastien Lile', { align: 'right' });
+
+  const signaturePath = path.join(__dirname, 'signature.png'); // image dans backend/
+  if (fs.existsSync(signaturePath)) {
+    doc.image(signaturePath, {
+      fit: [120, 60],
+      align: 'right',
+      valign: 'bottom'
+    });
+  } else {
+    console.warn('⚠️ Image de signature non trouvée à :', signaturePath);
+  }
+
+  doc.end();
 });
   doc.end();
 });
