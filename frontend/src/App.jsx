@@ -26,8 +26,47 @@ function App() {
       adresse: '13 rue des charonnerets, Richemont 57270',
       loyer: 1800,
       charges: 0
+    },
+    {
+      nom: 'Abu Nayeem',
+      email: 'anmnayeem7@gmail.com',
+      civilite: 'Monsieur',
+      adresse: '535 grande rue - Carrière sous Poissy',
+      loyer: 400,
+      charges: 100
+    },
+    {
+      nom: 'Jules Goumaye',
+      email: 'julesgoumaye55@gmail.com',
+      civilite: 'Monsieur',
+      adresse: '535 grande rue - Carrière sous Poissy',
+      loyer: 500,
+      charges: 100
+    },
+    {
+      nom: 'Mohamed Lansary',
+      email: 'lansarfrance@gmail.com',
+      civilite: 'Monsieur',
+      adresse: '535 grande rue - Carrière sous Poissy',
+      loyer: 400,
+      charges: 100
+    },
+    {
+      nom: 'Mehdi El Khalifi',
+      email: 'medi.fv@hotmail.fr',
+      civilite: 'Monsieur',
+      adresse: '535 grande rue - Carrière sous Poissy',
+      loyer: 600,
+      charges: 100
+    },
+    {
+      nom: 'Mya Kristenne',
+      email: 'myakristenne@gmail.com',
+      civilite: 'Madame',
+      adresse: '535 grande rue - Carrière sous Poissy',
+      loyer: 400,
+      charges: 100
     }
-    // Tu peux ajouter d'autres locataires ici
   ];
 
   const handleSelectionLocataire = (nom) => {
