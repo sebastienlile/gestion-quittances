@@ -78,7 +78,7 @@ doc.fontSize(18).text('Quittance de Loyer', { align: 'center' });
   doc.moveDown();
   doc.text(`Fait le : ${new Date().toLocaleDateString('fr-FR')}`);
   doc.moveDown(2);
-  doc.text('Sébastien Lile', { align: 'right' });
+  doc.text('Sébastien Lile',);
 
   // Ajout de la signature si l’image existe
   const signaturePath = path.join(__dirname, 'signature.png');
