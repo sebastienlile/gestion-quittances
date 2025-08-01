@@ -40,7 +40,7 @@ function App() {
   }, [mode]);
 
   const chargerHistorique = async () => {
-    const { data, error } = await supabase.from('quittance').select('*').order('date_envoi', { ascending: false });
+    const { data, error } = await supabase.from('Quittance').select('*').order('date_envoi', { ascending: false });
     if (error) {
       console.error('Erreur chargement historique:', error);
     } else {
