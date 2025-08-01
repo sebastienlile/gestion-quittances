@@ -16,10 +16,6 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-const PDFDocument = require('pdfkit');
-const fs = require('fs');
-const path = require('path');
-
 app.post('/api/envoyer-quittance', (req, res) => {
   const {
     emailLocataire,
@@ -95,6 +91,5 @@ app.post('/api/envoyer-quittance', (req, res) => {
 
   doc.end();
 });
-
 
 app.listen(5000, () => console.log('Serveur démarré sur le port 5000'));
