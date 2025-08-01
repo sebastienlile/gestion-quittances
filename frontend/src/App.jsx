@@ -47,23 +47,7 @@ function App() {
       setHistorique(data);
     }
   };
-const { error } = await supabase.from('quittances').insert([
-  {
-    civilite,
-    nom: nomLocataire,
-    email: emailLocataire,
-    adresse: adresseLocataire,
-    loyer: parseFloat(montantLoyer),
-    charges: parseFloat(montantCharges),
-    periode: periodeLoyer
-  }
-]);
 
-if (error) {
-  console.error('Erreur insertion Supabase:', error);
-} else {
-  console.log('✅ Données insérées dans Supabase');
-}
   const supprimerQuittance = async (id) => {
     const { error } = await supabase.from('quittances').delete().eq('id', id);
     if (error) {
@@ -88,7 +72,7 @@ if (error) {
         periodeLoyer
       });
 
-      await supabase.from('quittances').insert([
+      const { error } = await supabase.from('quittances').insert([
         {
           civilite,
           nom: nomLocataire,
@@ -100,9 +84,16 @@ if (error) {
         }
       ]);
 
+      if (error) {
+        console.error('Erreur insertion Supabase:', error);
+      } else {
+        console.log('✅ Données insérées dans Supabase');
+        chargerHistorique();
+      }
+
       setMessage('✅ Quittance envoyée avec succès !');
     } catch (error) {
-      console.error(error);
+      console.error('Erreur générale:', error);
       setMessage('❌ Erreur lors de l\'envoi de la quittance.');
     }
     setLoading(false);
