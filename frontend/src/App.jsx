@@ -17,6 +17,8 @@ function App() {
   const [message, setMessage] = useState('');
   const [mode, setMode] = useState('formulaire');
   const [historique, setHistorique] = useState([]);
+  const [recherche, setRecherche] = useState('');
+
 
   const locataires = [
     {
@@ -164,7 +166,6 @@ function App() {
   };
 
   if (mode === 'dashboard') {
-  const [recherche, setRecherche] = useState('');
   const quittancesFiltrees = historique.filter(q =>
     q.nom.toLowerCase().includes(recherche.toLowerCase()) ||
     q.email.toLowerCase().includes(recherche.toLowerCase())
