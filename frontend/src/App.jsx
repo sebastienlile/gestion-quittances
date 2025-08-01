@@ -187,54 +187,60 @@ function App() {
   }
 
   return (
-    <div style={{ maxWidth: '600px', margin: '2rem auto', padding: '2rem', fontFamily: 'Arial', backgroundColor: '#fefefe', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+    <div style={{ maxWidth: '700px', margin: '2rem auto', padding: '2rem', fontFamily: 'Arial', backgroundColor: '#fefefe', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
       <h2 style={{ textAlign: 'center', color: '#333' }}>Envoyer une quittance de loyer</h2>
 
       <button onClick={() => setMode('dashboard')} style={{ marginBottom: '1rem', width: '100%', padding: '0.5rem', backgroundColor: '#eee', border: 'none', borderRadius: '5px' }}>
         📊 Voir les quittances envoyées
       </button>
 
-      <label>Locataire :</label>
-      <select value={nomLocataire} onChange={e => handleSelectionLocataire(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }}>
-        <option value="">-- Sélectionner un locataire --</option>
-        {locataires.map((l, index) => (
-          <option key={index} value={l.nom}>{l.nom}</option>
-        ))}
-      </select>
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+        <div style={{ flex: 1 }}>
+          <label>Locataire :</label>
+          <select value={nomLocataire} onChange={e => handleSelectionLocataire(e.target.value)} style={{ width: '100%', padding: '0.5rem' }}>
+            <option value="">-- Sélectionner --</option>
+            {locataires.map((l, index) => (
+              <option key={index} value={l.nom}>{l.nom}</option>
+            ))}
+          </select>
+        </div>
+        <div style={{ flex: 1 }}>
+          <label>Civilité :</label>
+          <select value={civilite} onChange={e => setCivilite(e.target.value)} style={{ width: '100%', padding: '0.5rem' }}>
+            <option value="">-- Choisir --</option>
+            <option value="Monsieur">Monsieur</option>
+            <option value="Madame">Madame</option>
+          </select>
+        </div>
+      </div>
 
-      <label>Civilité :</label>
-      <select value={civilite} onChange={e => setCivilite(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }}>
-        <option value="">-- Choisir --</option>
-        <option value="Monsieur">Monsieur</option>
-        <option value="Madame">Madame</option>
-      </select>
+      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <input type="email" placeholder="Email" value={emailLocataire} onChange={e => setEmailLocataire(e.target.value)} style={{ flex: '1 1 48%', padding: '0.5rem', marginBottom: '1rem' }} />
+        <input type="text" placeholder="Nom complet" value={nomLocataire} onChange={e => setNomLocataire(e.target.value)} style={{ flex: '1 1 48%', padding: '0.5rem', marginBottom: '1rem' }} />
+        <input type="text" placeholder="Adresse" value={adresseLocataire} onChange={e => setAdresseLocataire(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }} />
+        <input type="number" placeholder="Loyer (€)" value={montantLoyer} onChange={e => setMontantLoyer(e.target.value)} style={{ flex: '1 1 48%', padding: '0.5rem', marginBottom: '1rem' }} />
+        <input type="number" placeholder="Charges (€)" value={montantCharges} onChange={e => setMontantCharges(e.target.value)} style={{ flex: '1 1 48%', padding: '0.5rem', marginBottom: '1rem' }} />
+      </div>
 
-      <input type="email" placeholder="Email du locataire" value={emailLocataire} onChange={e => setEmailLocataire(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }} /><br />
-      <input type="text" placeholder="Nom du locataire" value={nomLocataire} onChange={e => setNomLocataire(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }} /><br />
-      <input type="text" placeholder="Adresse du locataire" value={adresseLocataire} onChange={e => setAdresseLocataire(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }} /><br />
-      <input type="number" placeholder="Montant du loyer (€)" value={montantLoyer} onChange={e => setMontantLoyer(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }} /><br />
-      <input type="number" placeholder="Montant des charges (€)" value={montantCharges} onChange={e => setMontantCharges(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }} /><br />
-      <input type="date" value={datePaiement} onChange={e => setDatePaiement(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }} /><br />
-
-      <label>Mois :</label>
-      <select value={mois} onChange={e => setMois(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }}>
-        <option value="">-- Choisir un mois --</option>
-        <option value="0">Janvier</option>
-        <option value="1">Février</option>
-        <option value="2">Mars</option>
-        <option value="3">Avril</option>
-        <option value="4">Mai</option>
-        <option value="5">Juin</option>
-        <option value="6">Juillet</option>
-        <option value="7">Août</option>
-        <option value="8">Septembre</option>
-        <option value="9">Octobre</option>
-        <option value="10">Novembre</option>
-        <option value="11">Décembre</option>
-      </select><br />
-
-      <label>Année :</label>
-      <input type="number" placeholder="ex : 2025" value={annee} onChange={e => setAnnee(e.target.value)} style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }} /><br />
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+        <input type="date" value={datePaiement} onChange={e => setDatePaiement(e.target.value)} style={{ flex: 1, padding: '0.5rem' }} />
+        <select value={mois} onChange={e => setMois(e.target.value)} style={{ flex: 1, padding: '0.5rem' }}>
+          <option value="">-- Mois --</option>
+          <option value="0">Janvier</option>
+          <option value="1">Février</option>
+          <option value="2">Mars</option>
+          <option value="3">Avril</option>
+          <option value="4">Mai</option>
+          <option value="5">Juin</option>
+          <option value="6">Juillet</option>
+          <option value="7">Août</option>
+          <option value="8">Septembre</option>
+          <option value="9">Octobre</option>
+          <option value="10">Novembre</option>
+          <option value="11">Décembre</option>
+        </select>
+        <input type="number" placeholder="Année" value={annee} onChange={e => setAnnee(e.target.value)} style={{ flex: 1, padding: '0.5rem' }} />
+      </div>
 
       <p><strong>Période générée :</strong> {periodeLoyer || '—'}</p>
 
