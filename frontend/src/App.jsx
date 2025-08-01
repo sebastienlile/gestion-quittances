@@ -9,12 +9,12 @@ function App() {
 
   const envoyerQuittance = async () => {
     try {
-      await axios.post('http://localhost:5000/api/envoyer-quittance', {
-        emailLocataire,
-        montantLoyer,
-        montantCharges,
-        datePaiement
-      });
+await axios.post('https://quittances-backend.onrender.com/api/envoyer-quittance', {
+  emailLocataire,
+  montantLoyer,
+  montantCharges,
+  datePaiement
+});
       alert('Quittance envoyée avec succès');
     } catch (error) {
       alert('Erreur lors de l\'envoi');
