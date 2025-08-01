@@ -49,7 +49,7 @@ function App() {
   };
 
   const supprimerQuittance = async (id) => {
-    const { error } = await supabase.from('quittance').delete().eq('id', id);
+    const { error } = await supabase.from('Quittance').delete().eq('id', id);
     if (error) {
       console.error('Erreur suppression:', error);
     } else {
@@ -72,7 +72,7 @@ function App() {
         periodeLoyer
       });
 
-      const { error } = await supabase.from('quittance').insert([
+      const { error } = await supabase.from('Quittance').insert([
         {
           civilite,
           nom: nomLocataire,
