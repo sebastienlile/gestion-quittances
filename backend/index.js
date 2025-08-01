@@ -1,5 +1,6 @@
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
@@ -8,34 +9,40 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// ✉️ Configuration Nodemailer (⚠️ remplace par process.env en production)
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'sebastien95360@gmail.com',
-    pass: 'knrwbqjkjfmqgezy'
+    user: 'sebastien95360@gmail.com',              // à sécuriser dans Render
+    pass: 'knrwbqjkjfmqgezy'                        // mot de passe d'application Gmail
   }
 });
 
 app.post('/api/envoyer-quittance', (req, res) => {
-  const { emailLocataire, montantLoyer, montantCharges, datePaiement } = req.body;
+  const {
+    emailLocataire,
+    nomLocataire,
+    adresseLocataire,
+    montantLoyer,
+    montantCharges,
+    datePaiement
+  } = req.body;
 
-  // 1. Créer le PDF dans un buffer (pas besoin de fichier temporaire)
+  const total = parseFloat(montantLoyer) + parseFloat(montantCharges);
+
+  // === Création du PDF
   const doc = new PDFDocument();
-  let buffers = [];
+  const buffers = [];
 
   doc.on('data', buffers.push.bind(buffers));
   doc.on('end', () => {
     const pdfBuffer = Buffer.concat(buffers);
 
-    // 2. Configuration de l'email
     const mailOptions = {
-      from: process.env.GMAIL_USER,
+      from: 'sebastien95360@gmail.com',
       to: emailLocataire,
       subject: 'Quittance de Loyer',
-      html: `
-        <h3>Quittance de Loyer</h3>
-        <p>Veuillez trouver ci-joint la quittance pour le paiement du loyer.</p>
-      `,
+      html: `<p>Veuillez trouver ci-joint votre quittance de loyer.</p>`,
       attachments: [
         {
           filename: `quittance-${datePaiement}.pdf`,
@@ -48,25 +55,42 @@ app.post('/api/envoyer-quittance', (req, res) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.error(error);
-        return res.status(500).send('Erreur lors de l\'envoi de la quittance.');
+        return res.status(500).send("Erreur lors de l'envoi de la quittance.");
       }
       res.status(200).send('Quittance PDF envoyée avec succès.');
     });
   });
 
-  // 3. Contenu du PDF
-  doc.fontSize(18).text('Quittance de Loyer', { align: 'center' });
+  // === Modèle de la quittance
+  doc.fontSize(12);
+  doc.text(`Je soussigné, Sébastien Lile, propriétaire du logement situé au :`);
+  doc.text(`535 Grande Rue, 78955 Carrières-sous-Poissy,`);
   doc.moveDown();
-  doc.fontSize(12).text(`Montant du loyer : ${montantLoyer} €`);
-  doc.text(`Montant des charges : ${montantCharges} €`);
-  doc.text(`Date de paiement : ${datePaiement}`);
-  doc.text(`Établie sous réserve d'encaissement.`);
-doc.image('signature.png', {
-  fit: [120, 60],      // Taille réduite de l’image
-  align: 'right',
-  valign: 'bottom'
+  doc.text(`déclare avoir reçu de la part de :`);
+  doc.text(`  • Nom du locataire : ${nomLocataire}`);
+  doc.text(`  • Adresse du locataire : ${adresseLocataire}`);
+  doc.moveDown();
+  doc.text(`Le paiement du loyer pour la période :`);
+  doc.text(`  • Montant du loyer : ${montantLoyer} €`);
+  doc.text(`  • Montant des charges : ${montantCharges} €`);
+  doc.text(`  • Total payé : ${total} €`);
+  doc.moveDown();
+  doc.text(`Fait le : ${new Date().toLocaleDateString('fr-FR')}`);
+  doc.moveDown(2);
+  doc.text('Sébastien Lile', { align: 'right' });
 
-});
+  // Ajout de la signature si l’image existe
+  const signaturePath = path.join(__dirname, 'signature.png');
+  if (fs.existsSync(signaturePath)) {
+    doc.image(signaturePath, {
+      fit: [120, 60],
+      align: 'right',
+      valign: 'bottom'
+    });
+  } else {
+    console.warn('⚠️ signature.png non trouvée dans le dossier backend.');
+  }
+
   doc.end();
 });
 
