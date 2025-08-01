@@ -14,6 +14,8 @@ function App() {
   const [periodeLoyer, setPeriodeLoyer] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [mode, setMode] = useState('formulaire'); // 'dashboard' ou 'formulaire'
+  const [historique, setHistorique] = useState([]);
 
   const genererPeriodeLoyer = (moisIndex, annee) => {
     if (moisIndex === '' || annee === '') return '';
@@ -44,7 +46,31 @@ function App() {
         datePaiement,
         periodeLoyer
       });
+
+      // Ajoute à l'historique local
+      setHistorique(prev => [
+        ...prev,
+        {
+          civilite,
+          nom: nomLocataire,
+          email: emailLocataire,
+          date: new Date().toLocaleDateString('fr-FR'),
+          periode: periodeLoyer
+        }
+      ]);
+
       setMessage('✅ Quittance envoyée avec succès !');
+      // Optionnel : réinitialise le formulaire
+      setCivilite('');
+      setEmailLocataire('');
+      setNomLocataire('');
+      setAdresseLocataire('');
+      setMontantLoyer('');
+      setMontantCharges('');
+      setDatePaiement('');
+      setMois('');
+      setAnnee('');
+      setPeriodeLoyer('');
     } catch (error) {
       console.error(error);
       setMessage('❌ Erreur lors de l\'envoi de la quittance.');
@@ -52,9 +78,30 @@ function App() {
     setLoading(false);
   };
 
+  if (mode === 'dashboard') {
+    return (
+      <div style={{ maxWidth: '600px', margin: 'auto', padding: '2rem', fontFamily: 'Arial' }}>
+        <h2>Tableau de bord</h2>
+        <button onClick={() => setMode('formulaire')}>➕ Créer une quittance</button>
+        <ul>
+          {historique.length === 0 && <li>Aucune quittance encore envoyée.</li>}
+          {historique.map((q, index) => (
+            <li key={index}>
+              {q.civilite} {q.nom} — {q.email} — {q.periode} — {q.date}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+
   return (
     <div style={{ maxWidth: '500px', margin: 'auto', padding: '2rem', fontFamily: 'Arial' }}>
       <h2>Envoyer une quittance de loyer</h2>
+
+      <button onClick={() => setMode('dashboard')} style={{ marginBottom: '1rem' }}>
+        📊 Voir les quittances envoyées
+      </button>
 
       <label>Civilité :</label>
       <select value={civilite} onChange={e => setCivilite(e.target.value)}>
