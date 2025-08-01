@@ -157,7 +157,18 @@ const trierPar = (colonne) => {
         datePaiement,
         periodeLoyer
       });
-
+await supabase.from('Quittance').insert([
+  {
+    civilite,
+    nom: nomLocataire,
+    email: emailLocataire,
+    adresse: adresseLocataire,
+    loyer: parseFloat(montantLoyer),
+    charges: parseFloat(montantCharges),
+    periode: periodeLoyer,
+    date_envoi: new Date().toISOString()
+  }
+]);
       const { error } = await supabase.from('Quittance').insert([
         {
           civilite,
