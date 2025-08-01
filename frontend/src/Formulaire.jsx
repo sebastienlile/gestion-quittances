@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function App() {
+function Formulaire() {
   const [civilite, setCivilite] = useState('');
   const [emailLocataire, setEmailLocataire] = useState('');
   const [nomLocataire, setNomLocataire] = useState('');
@@ -20,7 +20,7 @@ function App() {
     const dateDebut = new Date(annee, moisIndex, 1);
     const dateFin = new Date(annee, parseInt(moisIndex) + 1, 0);
     const format = (d) => d.toLocaleDateString('fr-FR');
-    return `${format(dateDebut)} au ${format(dateFin)}`;
+    return \`\${format(dateDebut)} au \${format(dateFin)}\`;
   };
 
   useEffect(() => {
@@ -47,7 +47,7 @@ function App() {
       setMessage('✅ Quittance envoyée avec succès !');
     } catch (error) {
       console.error(error);
-      setMessage('❌ Erreur lors de l\'envoi de la quittance.');
+      setMessage('❌ Erreur lors de l'envoi de la quittance.');
     }
     setLoading(false);
   };
@@ -99,4 +99,5 @@ function App() {
     </div>
   );
 }
+
 export default Formulaire;
