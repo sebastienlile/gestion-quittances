@@ -164,27 +164,87 @@ function App() {
   };
 
   if (mode === 'dashboard') {
-    return (
-      <div style={{ maxWidth: '600px', margin: 'auto', padding: '2rem', fontFamily: 'Arial' }}>
-        <h2>Tableau de bord</h2>
-        <button onClick={() => setMode('formulaire')}>➕ Créer une quittance</button>
-        <ul>
-          {historique.length === 0 && <li>Aucune quittance enregistrée.</li>}
-          {historique.map((q, index) => (
-            <li key={q.id} style={{ marginBottom: '0.5rem' }}>
-              {q.civilite} {q.nom} — {q.email} — {q.periode} — {new Date(q.date_envoi).toLocaleDateString('fr-FR')}
-              <button
-                onClick={() => supprimerQuittance(q.id)}
-                style={{ marginLeft: '1rem', color: 'white', backgroundColor: 'red', border: 'none', padding: '0.2rem 0.5rem', cursor: 'pointer' }}
-              >
-                🗑️ Supprimer
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
-  }
+  const [recherche, setRecherche] = useState('');
+  const quittancesFiltrees = historique.filter(q =>
+    q.nom.toLowerCase().includes(recherche.toLowerCase()) ||
+    q.email.toLowerCase().includes(recherche.toLowerCase())
+  );
+
+  return (
+    <div style={{ maxWidth: '800px', margin: 'auto', padding: '2rem', fontFamily: 'Arial' }}>
+      <h2 style={{ textAlign: 'center', color: '#333' }}>📋 Tableau de bord des quittances</h2>
+      <button
+        onClick={() => setMode('formulaire')}
+        style={{
+          margin: '1rem auto',
+          display: 'block',
+          padding: '0.5rem 1rem',
+          borderRadius: '5px',
+          backgroundColor: '#007bff',
+          color: 'white',
+          border: 'none'
+        }}
+      >
+        ➕ Créer une quittance
+      </button>
+
+      <input
+        type="text"
+        placeholder="🔍 Rechercher un locataire..."
+        value={recherche}
+        onChange={e => setRecherche(e.target.value)}
+        style={{
+          width: '100%',
+          padding: '0.5rem',
+          marginBottom: '1rem',
+          borderRadius: '5px',
+          border: '1px solid #ccc'
+        }}
+      />
+
+      {quittancesFiltrees.length === 0 ? (
+        <p style={{ textAlign: 'center', color: '#888' }}>Aucune quittance trouvée.</p>
+      ) : (
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr style={{ backgroundColor: '#f5f5f5' }}>
+              <th style={{ padding: '0.75rem', borderBottom: '1px solid #ccc' }}>Locataire</th>
+              <th style={{ padding: '0.75rem', borderBottom: '1px solid #ccc' }}>Email</th>
+              <th style={{ padding: '0.75rem', borderBottom: '1px solid #ccc' }}>Période</th>
+              <th style={{ padding: '0.75rem', borderBottom: '1px solid #ccc' }}>Date d'envoi</th>
+              <th style={{ padding: '0.75rem', borderBottom: '1px solid #ccc' }}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {quittancesFiltrees.map((q) => (
+              <tr key={q.id} style={{ borderBottom: '1px solid #eee' }}>
+                <td style={{ padding: '0.75rem' }}>{q.civilite} {q.nom}</td>
+                <td style={{ padding: '0.75rem' }}>{q.email}</td>
+                <td style={{ padding: '0.75rem' }}>{q.periode}</td>
+                <td style={{ padding: '0.75rem' }}>{new Date(q.date_envoi).toLocaleDateString('fr-FR')}</td>
+                <td style={{ padding: '0.75rem' }}>
+                  <button
+                    onClick={() => supprimerQuittance(q.id)}
+                    style={{
+                      backgroundColor: 'red',
+                      color: 'white',
+                      border: 'none',
+                      padding: '0.4rem 0.7rem',
+                      borderRadius: '4px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    🗑️ Supprimer
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
 
   return (
     <div style={{ maxWidth: '700px', margin: '2rem auto', padding: '2rem', fontFamily: 'Arial', backgroundColor: '#fefefe', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
