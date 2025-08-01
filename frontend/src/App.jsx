@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function App() {
@@ -8,8 +8,26 @@ function App() {
   const [montantLoyer, setMontantLoyer] = useState('');
   const [montantCharges, setMontantCharges] = useState('');
   const [datePaiement, setDatePaiement] = useState('');
+  const [mois, setMois] = useState('');
+  const [annee, setAnnee] = useState('');
+  const [periodeLoyer, setPeriodeLoyer] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+
+  const genererPeriodeLoyer = (moisIndex, annee) => {
+    if (moisIndex === '' || annee === '') return '';
+    const dateDebut = new Date(annee, moisIndex, 1);
+    const dateFin = new Date(annee, parseInt(moisIndex) + 1, 0);
+    const format = (d) => d.toLocaleDateString('fr-FR');
+    return `${format(dateDebut)} au ${format(dateFin)}`;
+  };
+
+  useEffect(() => {
+    if (mois !== '' && annee !== '') {
+      const periode = genererPeriodeLoyer(mois, annee);
+      setPeriodeLoyer(periode);
+    }
+  }, [mois, annee]);
 
   const envoyerQuittance = async () => {
     setLoading(true);
@@ -21,7 +39,8 @@ function App() {
         adresseLocataire,
         montantLoyer,
         montantCharges,
-        datePaiement
+        datePaiement,
+        periodeLoyer
       });
       setMessage('✅ Quittance envoyée avec succès !');
     } catch (error) {
@@ -40,6 +59,29 @@ function App() {
       <input type="number" placeholder="Montant du loyer (€)" value={montantLoyer} onChange={e => setMontantLoyer(e.target.value)} /><br />
       <input type="number" placeholder="Montant des charges (€)" value={montantCharges} onChange={e => setMontantCharges(e.target.value)} /><br />
       <input type="date" value={datePaiement} onChange={e => setDatePaiement(e.target.value)} /><br />
+
+      <label>Mois :</label>
+      <select value={mois} onChange={e => setMois(e.target.value)}>
+        <option value="">-- Choisir un mois --</option>
+        <option value="0">Janvier</option>
+        <option value="1">Février</option>
+        <option value="2">Mars</option>
+        <option value="3">Avril</option>
+        <option value="4">Mai</option>
+        <option value="5">Juin</option>
+        <option value="6">Juillet</option>
+        <option value="7">Août</option>
+        <option value="8">Septembre</option>
+        <option value="9">Octobre</option>
+        <option value="10">Novembre</option>
+        <option value="11">Décembre</option>
+      </select><br />
+
+      <label>Année :</label>
+      <input type="number" placeholder="ex : 2025" value={annee} onChange={e => setAnnee(e.target.value)} /><br />
+
+      <p><strong>Période générée :</strong> {periodeLoyer || '—'}</p>
+
       <button onClick={envoyerQuittance} disabled={loading} style={{ marginTop: '1rem' }}>
         {loading ? 'Envoi en cours...' : 'Envoyer la quittance'}
       </button>
