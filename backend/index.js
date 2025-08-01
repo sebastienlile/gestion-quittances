@@ -7,7 +7,11 @@ const cors = require('cors');
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'https://quittances-frontend.onrender.com',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
 
 // ✉️ Configuration Nodemailer (⚠️ remplace par process.env en production)
 const transporter = nodemailer.createTransport({
