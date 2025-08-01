@@ -36,7 +36,7 @@ app.post('/api/envoyer-quittance', (req, res) => {
     const pdfBuffer = Buffer.concat(buffers);
 
     const mailOptions = {
-      from: process.env.GMAIL_USER,
+      from: sebastien95360@gmail;com,
       to: emailLocataire,
       subject: 'Quittance de Loyer',
       html: `<p>Veuillez trouver ci-joint votre quittance de loyer.</p>`,
