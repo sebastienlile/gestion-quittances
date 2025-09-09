@@ -62,6 +62,15 @@ function App() {
       loyer: 600,
       charges: 100
     },
+        {
+      nom: 'Ethan CLEMENTINE',
+      email: 'ethanclementine@gmail.com',
+      civilite: 'Monsieur',
+      adresse: '535 grande rue - Carrière sous Poissy',
+      loyer: 500,
+      charges: 100
+    },
+
     {
       nom: 'Mya Kristenne',
       email: 'myakristenne@gmail.com',
