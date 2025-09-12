@@ -102,54 +102,27 @@ app.post('/api/generer-quittance', (req, res) => {
 function generatePDF(doc, civilite, nomLocataire, adresseLocataire, montantLoyer, montantCharges, periodeLoyer) {
   const total = parseFloat(montantLoyer) + parseFloat(montantCharges);
 
-  // 🎨 En-tête
-  doc.fillColor('#333')
-    .fontSize(22)
-    .text('📄 Quittance de Loyer', { align: 'center' })
-    .moveDown(1);
-
-  // 🏠 Propriétaire
-  doc.fontSize(12).fillColor('#000');
-  doc.text('🧾 Propriétaire : Sébastien Lile');
-  doc.text('📍 Adresse : 535 Grande Rue, 78955 Carrières-sous-Poissy');
+  doc.fontSize(18).text('Quittance de Loyer', { align: 'center' });
   doc.moveDown();
-
-  // 👤 Locataire
-  doc.font('Helvetica-Bold').text('👤 Locataire :', { underline: true });
-  doc.font('Helvetica').text(`${civilite} ${nomLocataire}`);
-  doc.text(adresseLocataire);
+  doc.fontSize(12);
+  doc.text(`Je soussigné, Sébastien Lile, propriétaire du logement situé au :`);
+  doc.text(`535 Grande Rue, 78955 Carrières-sous-Poissy,`);
+  doc.text(`déclare avoir reçu de la part de :`);
   doc.moveDown();
-
-  // 📅 Période
-  doc.font('Helvetica-Bold').text('📅 Période concernée :', { underline: true });
-  doc.font('Helvetica').text(`${periodeLoyer}`);
+  doc.text(`  • Nom du locataire : ${civilite} ${nomLocataire}`);
+  doc.text(`  • Adresse du locataire : ${adresseLocataire}`);
   doc.moveDown();
-
-  // 💰 Détail des paiements
-  doc
-    .moveTo(50, doc.y)
-    .lineTo(550, doc.y)
-    .strokeColor('#ccc')
-    .stroke();
-
+  doc.text(`Le paiement du loyer pour la période : ${periodeLoyer}`);
   doc.moveDown();
-  doc.font('Helvetica').text(`💶 Loyer : ${montantLoyer} €`);
-  doc.text(`🔧 Charges : ${montantCharges} €`);
-  doc.font('Helvetica-Bold').text(`💰 Total payé : ${total} €`);
+  doc.text(`  • Montant du loyer : ${montantLoyer} €`);
+  doc.text(`  • Montant des charges : ${montantCharges} €`);
+  doc.font('Helvetica-Bold');
+  doc.text(`  • Total payé : ${total} €`);
   doc.font('Helvetica');
   doc.moveDown();
-
-  doc
-    .moveTo(50, doc.y)
-    .lineTo(550, doc.y)
-    .strokeColor('#ccc')
-    .stroke();
-
-  // 📍 Date + Signature
+  doc.text(`Fait le : ${new Date().toLocaleDateString('fr-FR')}`);
   doc.moveDown(2);
-  doc.text(`Fait à Carrières-sous-Poissy, le ${new Date().toLocaleDateString('fr-FR')}`);
-  doc.moveDown(2);
-  doc.text('Signature du propriétaire :', { continued: true });
+  doc.text('Sébastien Lile');
 
   const signaturePath = path.join(__dirname, 'signature.png');
   if (fs.existsSync(signaturePath)) {
@@ -158,8 +131,6 @@ function generatePDF(doc, civilite, nomLocataire, adresseLocataire, montantLoyer
       align: 'right',
       valign: 'bottom'
     });
-  } else {
-    doc.moveDown().text('_______________________', { align: 'right' });
   }
 
   doc.end();
