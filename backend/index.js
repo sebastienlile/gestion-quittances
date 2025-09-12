@@ -120,10 +120,10 @@ function generatePDF(doc, civilite, nomLocataire, adresseLocataire, montantLoyer
   doc.text(`Paiement du loyer pour la période : ${periodeLoyer}`);
   doc.moveDown();
 
-  doc.text(`• Montant du loyer      : ${montantLoyer} €`);
-  doc.text(`• Montant des charges   : ${montantCharges} €`);
+  doc.text(`• Montant du loyer : ${montantLoyer} €`);
+  doc.text(`• Montant des charges : ${montantCharges} €`);
   doc.font('Helvetica-Bold');
-  doc.text(`• Total payé            : ${total} €`);
+  doc.text(`• Total payé : ${total} €`);
   doc.font('Helvetica');
   doc.moveDown(2);
 
