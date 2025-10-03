@@ -73,9 +73,10 @@ app.post('/api/envoyer-quittance', (req, res) => {
 });
 
 // 📄 Route pour CONSULTER (télécharger)
-app.post('/api/generer-quittance', (req, res) => {
+app.post('/api/envoyer-quittance', (req, res) => {
   const {
     civilite,
+    emailLocataire,
     nomLocataire,
     adresseLocataire,
     montantLoyer,
@@ -84,17 +85,44 @@ app.post('/api/generer-quittance', (req, res) => {
     periodeLoyer
   } = req.body;
 
+  const PDFDocument = require('pdfkit');
   const doc = new PDFDocument();
   const buffers = [];
 
   doc.on('data', buffers.push.bind(buffers));
   doc.on('end', () => {
     const pdfBuffer = Buffer.concat(buffers);
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `inline; filename=quittance-${datePaiement}.pdf`);
-    res.send(pdfBuffer);
+
+    const mailOptions = {
+      from: process.env.GMAIL_USER,
+      to: emailLocataire,
+      subject: 'Quittance de Loyer',
+      html: `
+        <p>Bonjour ${civilite} ${nomLocataire},</p>
+        <p>Veuillez trouver ci-joint votre quittance de loyer.</p>
+        <p>Cordialement,<br/>Sébastien Lile</p>
+      `,
+      attachments: [
+        {
+          filename: `quittance-${datePaiement}.pdf`,
+          content: pdfBuffer,
+          contentType: 'application/pdf'
+        }
+      ]
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('❌ Erreur mail:', error);
+        return res.status(500).send("Erreur lors de l'envoi de la quittance.");
+      }
+
+      console.log('📩 Mail envoyé :', info.response);
+      res.status(200).send('Quittance PDF envoyée avec succès.');
+    });
   });
 
+  // 👇 appelle ici ta fonction qui écrit dans le PDF
   generatePDF(doc, civilite, nomLocataire, adresseLocataire, montantLoyer, montantCharges, periodeLoyer);
 });
 
