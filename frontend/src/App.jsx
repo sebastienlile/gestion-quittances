@@ -62,6 +62,15 @@ function App() {
       loyer: 600,
       charges: 100
     },
+        {
+      nom: 'Ethan CLEMENTINE',
+      email: 'ethanclementine@gmail.com',
+      civilite: 'Monsieur',
+      adresse: '535 grande rue - Carrière sous Poissy',
+      loyer: 500,
+      charges: 100
+    },
+
     {
       nom: 'Mya Kristenne',
       email: 'myakristenne@gmail.com',
@@ -168,51 +177,52 @@ function App() {
 
 
 
-
 const envoyerQuittance = async () => {
-    setLoading(true);
-    setMessage('');
-    try {
-      await axios.post('https://quittances-backend.onrender.com/api/envoyer-quittance', {
+  setLoading(true);
+  setMessage('');
+
+  try {
+    await axios.post('https://quittances-backend.onrender.com/api/envoyer-quittance', {
+      civilite,
+      emailLocataire,
+      nomLocataire,
+      adresseLocataire,
+      montantLoyer,
+      montantCharges,
+      datePaiement,
+      periodeLoyer
+    });
+
+    // ➕ Insertion dans Supabase
+    const { error } = await supabase.from('Quittance').insert([
+      {
         civilite,
-        emailLocataire,
-        nomLocataire,
-        adresseLocataire,
-        montantLoyer,
-        montantCharges,
-        datePaiement,
-        periodeLoyer
-      });
-
-
-
-const { error } = await supabase.from('Quittance').insert([
-  {
-    civilite,
-    nom: nomLocataire,
-    email: emailLocataire,
-    adresse: adresseLocataire,
-    loyer: parseFloat(montantLoyer),
-    charges: parseFloat(montantCharges),
-    periode: periodeLoyer,
-    date_envoi: new Date().toISOString()
-  }
-]);
-
-      if (error) {
-        console.error('Erreur insertion Supabase:', error.message || error);
-      } else {
-        console.log('✅ Données insérées dans Supabase');
-        chargerHistorique();
+        nom: nomLocataire,
+        email: emailLocataire,
+        adresse: adresseLocataire,
+        loyer: parseFloat(montantLoyer),
+        charges: parseFloat(montantCharges),
+        periode: periodeLoyer,
+        date_envoi: new Date().toISOString()
       }
+    ]);
 
-      setMessage('✅ Quittance envoyée avec succès !');
-    } catch (error) {
-      console.error('Erreur générale:', error);
-      setMessage('❌ Erreur lors de l\'envoi de la quittance.');
+    if (error) {
+      console.error('Erreur insertion Supabase:', error.message || error);
+    } else {
+      console.log('✅ Données insérées dans Supabase');
+      chargerHistorique();
     }
-    setLoading(false);
-  };
+
+    setMessage('✅ Quittance envoyée avec succès !');
+  } catch (error) {
+    console.error('Erreur générale:', error);
+    setMessage('❌ Erreur lors de l\'envoi de la quittance.');
+  }
+
+  setLoading(false);
+};
+
 
   if (mode === 'dashboard') {
   const quittancesFiltrees = historique.filter(q =>
